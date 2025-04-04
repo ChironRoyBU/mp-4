@@ -1,5 +1,17 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
+
+type PokemonCard = {
+  id: string;
+  name: string;
+  hp?: string;
+  types?: string[];
+  images?: {
+    small: string;
+    large: string;
+  };
+};
 
 export default async function PokemonPage() {
   const apiKey = process.env.POKEMON_API_KEY;
@@ -16,7 +28,7 @@ export default async function PokemonPage() {
 
   const url = "https://api.pokemontcg.io/v2/cards?pageSize=20";
 
-  let data: any = null;
+  let data: PokemonCard[] = [];
   let errorMessage: string | null = null;
 
   try {
@@ -43,7 +55,7 @@ export default async function PokemonPage() {
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
       <ul style={{ listStyle: "none", padding: 0 }}>
-        {data?.map((card: any) => (
+        {data?.map((card: PokemonCard) => (
           <li
             key={card.id}
             style={{
@@ -57,7 +69,13 @@ export default async function PokemonPage() {
             <h2>{card.name}</h2>
             <p>HP: {card.hp || "?"} | Type: {card.types?.join(", ") || "?"}</p>
             {card.images?.small && (
-              <img src={card.images.small} alt={card.name} style={{ maxWidth: "200px" }} />
+              <Image
+                src={card.images.small}
+                alt={card.name}
+                width={200}
+                height={280}
+                style={{ objectFit: "contain", borderRadius: "4px" }}
+              />
             )}
           </li>
         ))}
